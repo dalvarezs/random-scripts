@@ -64,6 +64,6 @@ with open(filename, 'r') as f:
             out_range.append(ip)
 
 if args.list == 'in':
-    for i in in_range: print i
+    for i in in_range: print (i)
 else:
-    for i in out_range: print i
+    for i in out_range: print (i)
