@@ -27,7 +27,7 @@ parser = ArgumentParser(
 
 parser.add_argument('-l', '--list', choices=['in','out'], help='show IPs [in/out] of the range', required=True)
 parser.add_argument('ip_file', help='IPs to be searched')
-parser.add_argument('range_file', help='look IPs up in the Range. Format accepted: 192.168.1.0-192.168.1.255 / 192.168.1.0/24')
+parser.add_argument('range_file', help='look IPs up in the Range. Accepted formats: 192.168.1.0-192.168.1.255 / 192.168.1.0/24')
 parser.add_argument('--version', action='version', version=__version__)
 
 
