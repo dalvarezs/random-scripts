@@ -6,18 +6,27 @@
 from argparse import ArgumentParser
 import os
 import sys
-from netaddr import IPNetwork, IPAddress
+from netaddr import IPNetwork, IPAddress, IPRange
 
 
 __author__ = 'David Alvarez @dalvarez_s'
-__version__ = '0.2'
+__version__ = '0.3'
 __doc__ = 'Look IPs up in the Range. ' \
           'UseCase: Useful for identifying IPs not included in the scope of the Vulnerability scan'
 
-def rangeCIDR_to_list(range):
-    if "-" in range:
-        return range.strip().split("-")
-    # pending CIDR
+
+# Converts a string to IPAddress, IPNetwork or IPRange
+def strToNetObject(value):
+    cvalue = value.replace(" ","").replace('\t',"").replace('"','')
+    if "-" in cvalue:
+        ip_min_max = cvalue.split("-")
+        return IPRange(ip_min_max[0],ip_min_max[1])
+
+    elif "/" in cvalue:
+        return IPNetwork(cvalue)
+
+    else: #it is an IPAddress
+        return IPAddress(cvalue)
 
 parser = ArgumentParser(
     usage='%(prog)s ip_list range_list',
@@ -43,22 +52,16 @@ out_range = []
 
 with open(filename, 'r') as f:
     for line in f:
-        ip = line.strip()
-        # print (ip)
+        ip = line.replace(" ","")
+        #print ("[SUB]"+ip)
 
         ip_found = False
         for net_range in ip_range_list:
-            # print (net_range)
-            if "-" in net_range:
-                ip_min_max = net_range.strip().split("-") #### function
+            #print ("[NET]"+net_range)
 
-                if (IPAddress(ip_min_max[1]) >= IPAddress(ip)) and (IPAddress(ip_min_max[0]) <= IPAddress(ip)):
-                    #if args.list == 'in': print (str(ip)+" IP in the range "+str(ip_min_max))
-                    in_range.append(ip)
-                    ip_found = True
-                    break
-            elif "/" in net_range:
-                if IPAddress(ip) in IPNetwork(net_range):
+            net = strToNetObject(net_range)
+            if type(net) is not IPAddress:
+                if strToNetObject(line.replace(" ","")) in net:
                     in_range.append(ip)
                     ip_found = True
                     break
