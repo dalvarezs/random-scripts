@@ -52,22 +52,19 @@ out_range = []
 
 with open(filename, 'r') as f:
     for line in f:
-        ip = line.replace(" ","")
-        #print ("[SUB]"+ip)
-
         ip_found = False
         for net_range in ip_range_list:
             #print ("[NET]"+net_range)
 
             net = strToNetObject(net_range)
             if type(net) is not IPAddress:
-                if strToNetObject(line.replace(" ","")) in net:
-                    in_range.append(ip)
+                if strToNetObject(line) in net:
+                    in_range.append(line)
                     ip_found = True
                     break
 
         if ip_found == False:
-            out_range.append(ip)
+            out_range.append(line)
 
 if args.list == 'in':
     for i in in_range: print i
